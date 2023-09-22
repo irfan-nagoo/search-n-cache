@@ -1,6 +1,8 @@
 
-CREATE table sc_article (
-	id int primary key auto_increment,
+CREATE DATABASE search;
+
+CREATE TABLE sc_article (
+	id int PRIMARY KEY auto_increment,
 	title varchar(200),
 	description varchar(500),
 	author varchar(100),
