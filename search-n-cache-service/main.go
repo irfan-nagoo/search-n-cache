@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/search-n-cache/search-n-cache-service/component"
 	"github.com/search-n-cache/search-n-cache-service/config"
 	"github.com/search-n-cache/search-n-cache-service/router"
-	"github.com/search-n-cache/search-n-cache-service/component"
 )
 
 func main() {

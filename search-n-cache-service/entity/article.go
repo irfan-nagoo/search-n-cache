@@ -4,18 +4,19 @@ import (
 	"time"
 )
 
-
 type Article struct {
-	ID int64
-	Title string
+	ID              int64
+	Title           string
+	Description     string
+	Author          string
 	ArticleCategory string
-	ArticleType string
-	Content string
-	Tags string
-	CreatedAt time.Time
-	CreatedBy string
-	UpdatedAt time.Time
-	UpdatedBy string
+	ArticleType     string
+	Content         string
+	Tags            string
+	CreatedAt       time.Time
+	CreatedBy       string
+	UpdatedAt       time.Time
+	UpdatedBy       string
 }
 
 type Tabler interface {
@@ -24,4 +25,4 @@ type Tabler interface {
 
 func (Article) TableName() string {
 	return "sc_article"
-} 
+}
