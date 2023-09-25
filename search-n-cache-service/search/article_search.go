@@ -5,9 +5,11 @@ import (
 )
 
 type ArticleSearch interface {
-	GetArticleList() ([]*domain.ArticleListType, error)
-	GetArticleQuery(string) ([]*domain.ArticleListType, error)
+	GetArticleList() ([]*domain.ArticleSearchType, error)
+	SearchArticles(string) ([]*domain.ArticleSearchType, error)
 	SaveArticle(*domain.ArticleType) error
 	UpdateArticle(*domain.ArticleType) error
 	DeleteArticle(int64) error
+	CreateIndex() error
+	DeleteIndex() error
 }

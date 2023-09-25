@@ -2,6 +2,9 @@ package service
 
 import (
 	"errors"
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/search-n-cache/search-n-cache-service/component"
 	"github.com/search-n-cache/search-n-cache-service/constants"
@@ -10,17 +13,16 @@ import (
 	"github.com/search-n-cache/search-n-cache-service/repository"
 	"github.com/search-n-cache/search-n-cache-service/request"
 	"github.com/search-n-cache/search-n-cache-service/response"
+	"github.com/search-n-cache/search-n-cache-service/search"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"net/http"
-	"strconv"
 )
 
 func SaveArticle(ctx *gin.Context) {
 	log.Info("Starting SaveArticle")
 	var articleRequest *request.ArticleRequest
 	if err := ctx.BindJSON(&articleRequest); err != nil {
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 	article := component.ArticleTypeToArticle(articleRequest.Article)
@@ -28,17 +30,25 @@ func SaveArticle(ctx *gin.Context) {
 	tx := component.DBConnection.Begin()
 	if err := repository.CreateArticle(article, tx).Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
+		return
+	}
+
+	articleType := component.ArticleToArticleType(article)
+	// Create or Index the article record in the Search Engine
+	if err := (&search.ArticleElasticSearch{}).SaveArticle(articleType); err != nil {
+		tx.Rollback()
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 	// transaction completed
-	buildSuccessResponse(component.ArticleToArticleType(article), ctx)
+	buildArtDetlSuccessResponse(articleType, ctx)
 }
 
 func GetArticle(ctx *gin.Context) {
@@ -49,24 +59,24 @@ func GetArticle(ctx *gin.Context) {
 	tx := component.DBConnection.Begin()
 	if err := repository.GetArticle(id, article, tx).Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 	// transaction completed
-	buildSuccessResponse(component.ArticleToArticleType(article), ctx)
+	buildArtDetlSuccessResponse(component.ArticleToArticleType(article), ctx)
 }
 
 func UpdateArticle(ctx *gin.Context) {
 	log.Info("Starting UpdateArticle")
 	var articleRequest *request.ArticleRequest
 	if err := ctx.BindJSON(&articleRequest); err != nil {
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 	article := component.ArticleTypeToArticle(articleRequest.Article)
@@ -74,24 +84,31 @@ func UpdateArticle(ctx *gin.Context) {
 	tx := component.DBConnection.Begin()
 	if err := repository.UpdateArticle(article, tx).Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
+		return
+	}
+
+	// Update the article record in the Search Engine
+	if err := (&search.ArticleElasticSearch{}).UpdateArticle(articleRequest.Article); err != nil {
+		tx.Rollback()
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 	// transaction completed
-	buildSuccessResponse(component.ArticleToArticleType(article), ctx)
+	buildArtDetlSuccessResponse(component.ArticleToArticleType(article), ctx)
 }
 
 func DeleteArticle(ctx *gin.Context) {
 	log.Info("Starting DeleteArticle")
 	id, err := strconv.ParseInt(ctx.Params.ByName("id"), 10, 64)
 	if err != nil {
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 	}
 	articleType := &domain.ArticleType{ID: id}
 	article := component.ArticleTypeToArticle(articleType)
@@ -99,20 +116,27 @@ func DeleteArticle(ctx *gin.Context) {
 	tx := component.DBConnection.Begin()
 	if err := repository.DeleteArticle(article, tx).Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
+		return
+	}
+
+	// Delete the article record in the Search Engine
+	if err := (&search.ArticleElasticSearch{}).DeleteArticle(id); err != nil {
+		tx.Rollback()
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		buildErrorResponse(err, ctx)
+		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
 	// transaction completed
-	buildSuccessResponse(nil, ctx)
+	buildArtDetlSuccessResponse(nil, ctx)
 }
 
-func buildErrorResponse(err error, ctx *gin.Context) {
+func buildArtDetlErrorResponse(err error, ctx *gin.Context) {
 	log.Error(err)
 	httpStatus := http.StatusInternalServerError
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -125,9 +149,9 @@ func buildErrorResponse(err error, ctx *gin.Context) {
 	ctx.JSON(httpStatus, res)
 }
 
-func buildSuccessResponse(articleType *domain.ArticleType, ctx *gin.Context) {
+func buildArtDetlSuccessResponse(articleType *domain.ArticleType, ctx *gin.Context) {
 	httpStatus := http.StatusOK
-	res := response.ArticleResponse{
+	res := response.ArticleDetailResponse{
 		BaseResponse: response.BaseResponse{
 			Code:    http.StatusText(httpStatus),
 			Message: constants.SUCCESS_MESSAGE},
