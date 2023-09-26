@@ -25,5 +25,8 @@ func main() {
 	component.ElasticTypedClient = component.InitializeElasticSearchClient()
 	(&search.ArticleElasticSearch{}).CreateIndex()
 
+	// Initialize Cache client (Default: Redis)
+	component.RedisClient = component.InitializeRedisCacheClient()
+
 	engine.Run()
 }

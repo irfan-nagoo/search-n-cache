@@ -1,20 +1,17 @@
 package constants
 
-
-type Category int
-
-const (
-	TECHNOLOGY Category = iota
-	ENTERTAINMENT
-	SCIENCE
-	MARKETING
-)
-
-
-type Type int
+type Category string
 
 const (
-	GENERIC Type = iota
-	PERSONAL
+	TECHNOLOGY    Category = "Technology"
+	ENTERTAINMENT Category = "Entertainment"
+	SCIENCE       Category = "Science"
+	MARKETING     Category = "Marketing"
 )
 
+type Type string
+
+const (
+	GENERIC  Type = "Generic"
+	PERSONAL Type = "Personal"
+)

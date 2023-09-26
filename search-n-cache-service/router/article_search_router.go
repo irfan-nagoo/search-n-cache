@@ -8,4 +8,5 @@ import (
 func SetupArticleListRouter(engine *gin.Engine) {
 	// configure REST methods
 	engine.GET("/article-search/list", service.GetArticleList)
+	engine.GET("/article-search/search", service.SearchArticles)
 }

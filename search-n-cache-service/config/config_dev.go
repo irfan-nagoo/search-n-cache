@@ -18,4 +18,13 @@ func SetEnvironmentConfg() {
 	os.Setenv("ELASTIC_USERNAME", "elastic")
 	os.Setenv("ELASTIC_PASSWORD", "elastic")
 	os.Setenv("ELASTIC_INDEX", "search")
+
+	// Redis config
+	os.Setenv("REDIS_URL", "localhost:6379")
+	os.Setenv("REDIS_SKIP_VERIFY_SSL", "true")
+	os.Setenv("REDIS_CACHE_EXPIRY_INTERVAL_SEC", "120")
+	os.Setenv("REDIS_USERNAME", "")
+	os.Setenv("REDIS_PASSWORD", "")
+	os.Setenv("REDIS_DB", "0")
+
 }

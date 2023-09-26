@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/search-n-cache/search-n-cache-service/component"
 	"github.com/search-n-cache/search-n-cache-service/constants"
 	"github.com/search-n-cache/search-n-cache-service/domain"
@@ -21,7 +22,7 @@ import (
 func SaveArticle(ctx *gin.Context) {
 	log.Info("Starting SaveArticle")
 	var articleRequest *request.ArticleRequest
-	if err := ctx.BindJSON(&articleRequest); err != nil {
+	if err := ctx.ShouldBindJSON(&articleRequest); err != nil {
 		buildArtDetlErrorResponse(err, ctx)
 		return
 	}
@@ -139,8 +140,13 @@ func DeleteArticle(ctx *gin.Context) {
 func buildArtDetlErrorResponse(err error, ctx *gin.Context) {
 	log.Error(err)
 	httpStatus := http.StatusInternalServerError
+	// specific error check
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		httpStatus = http.StatusNotFound
+	}
+	// error type check
+	if errors.As(err, &validator.ValidationErrors{}) {
+		httpStatus = http.StatusBadRequest
 	}
 	res := response.BaseResponse{
 		Code:    http.StatusText(httpStatus),

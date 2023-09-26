@@ -6,11 +6,11 @@ import (
 
 type ArticleSolrSearch struct{}
 
-func (s *ArticleSolrSearch) GetArticleList() ([]*domain.ArticleSearchType, error) {
+func (s *ArticleSolrSearch) GetArticleList(pageNo int, pageSize int) ([]*domain.ArticleSearchType, error) {
 	return nil, nil
 }
 
-func (s *ArticleSolrSearch) SearchArticles() ([]*domain.ArticleSearchType, error) {
+func (s *ArticleSolrSearch) SearchArticles(query string, pageNo int, pageSize int) ([]*domain.ArticleSearchType, error) {
 	return nil, nil
 }
 

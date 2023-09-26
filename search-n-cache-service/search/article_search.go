@@ -5,8 +5,9 @@ import (
 )
 
 type ArticleSearch interface {
-	GetArticleList() ([]*domain.ArticleSearchType, error)
-	SearchArticles(string) ([]*domain.ArticleSearchType, error)
+	
+	GetArticleList(int,int) ([]*domain.ArticleSearchType, error)
+	SearchArticles(string,int,int) ([]*domain.ArticleSearchType, error)
 	SaveArticle(*domain.ArticleType) error
 	UpdateArticle(*domain.ArticleType) error
 	DeleteArticle(int64) error
