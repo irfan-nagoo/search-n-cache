@@ -6,6 +6,9 @@ import (
 	"github.com/search-n-cache/search-n-cache-service/config"
 	"github.com/search-n-cache/search-n-cache-service/router"
 	"github.com/search-n-cache/search-n-cache-service/search"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "github.com/search-n-cache/search-n-cache-service/docs"
 )
 
 func main() {
@@ -27,6 +30,8 @@ func main() {
 
 	// Initialize Cache client (Default: Redis)
 	component.RedisClient = component.InitializeRedisCacheClient()
+
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	engine.Run()
 }

@@ -18,6 +18,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Save Article
+//
+//	@Summary      Save article
+//	@Description  Save Article Information
+//	@Tags         Article Detail
+//	@Accept       json
+//	@Produce      json
+//	@Param 		  request body  request.ArticleRequest true "Article request"
+//	@Success      200  {object}  response.ArticleDetailResponse
+//	@Failure      400  {object}  response.ErrorResponse
+//	@Failure      500  {object}  response.ErrorResponse
+//	@Router       /article [post]
 func SaveArticle(ctx *gin.Context) {
 	log.Info("Starting SaveArticle")
 	var articleRequest *request.ArticleRequest
@@ -51,6 +63,18 @@ func SaveArticle(ctx *gin.Context) {
 	buildArtDetlSuccessResponse(articleType, ctx)
 }
 
+// Get Article
+//
+//	@Summary      Get article
+//	@Description  Get Article Information
+//	@Tags         Article Detail
+//	@Accept       json
+//	@Produce      json
+//	@Param 		  id   path      int  true  "Article Id"
+//	@Success      200  {object}  response.ArticleDetailResponse
+//	@Failure      404  {object}  response.ErrorResponse
+//	@Failure      500  {object}  response.ErrorResponse
+//	@Router       /article/{id} [get]
 func GetArticle(ctx *gin.Context) {
 	log.Info("Starting GetArticleDetails")
 	id := ctx.Params.ByName("id")
@@ -90,6 +114,18 @@ func GetArticle(ctx *gin.Context) {
 	buildArtDetlSuccessResponse(articleType, ctx)
 }
 
+// Update Article
+//
+//	@Summary      Update article
+//	@Description  Update Article Information
+//	@Tags         Article Detail
+//	@Accept       json
+//	@Produce      json
+//	@Param 		  request body  request.ArticleRequest true "Article request"
+//	@Success      200  {object}  response.ArticleDetailResponse
+//	@Failure      400  {object}  response.ErrorResponse
+//	@Failure      500  {object}  response.ErrorResponse
+//	@Router       /article [put]
 func UpdateArticle(ctx *gin.Context) {
 	log.Info("Starting UpdateArticle")
 	var articleRequest *request.ArticleRequest
@@ -122,6 +158,18 @@ func UpdateArticle(ctx *gin.Context) {
 	buildArtDetlSuccessResponse(component.ArticleToArticleType(article), ctx)
 }
 
+// Delete Article
+//
+//	@Summary      Delete article
+//	@Description  Delete Article Information
+//	@Tags         Article Detail
+//	@Accept       json
+//	@Produce      json
+//	@Param 		  id   path      int  true  "Article Id"
+//	@Success      200  {object}  response.BaseResponse
+//	@Failure      404  {object}  response.ErrorResponse
+//	@Failure      500  {object}  response.ErrorResponse
+//	@Router       /article/{id} [delete]
 func DeleteArticle(ctx *gin.Context) {
 	log.Info("Starting DeleteArticle")
 	id, err := strconv.ParseInt(ctx.Params.ByName("id"), 10, 64)

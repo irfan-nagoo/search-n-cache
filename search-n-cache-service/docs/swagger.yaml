@@ -1,0 +1,264 @@
+definitions:
+  constants.Category:
+    enum:
+    - Technology
+    - Entertainment
+    - Science
+    - Marketing
+    type: string
+    x-enum-varnames:
+    - TECHNOLOGY
+    - ENTERTAINMENT
+    - SCIENCE
+    - MARKETING
+  constants.Type:
+    enum:
+    - Generic
+    - Personal
+    type: string
+    x-enum-varnames:
+    - GENERIC
+    - PERSONAL
+  domain.ArticleType:
+    properties:
+      author:
+        type: string
+      category:
+        $ref: '#/definitions/constants.Category'
+      content:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      tags:
+        type: string
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/constants.Type'
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+    required:
+    - author
+    - content
+    - description
+    - title
+    type: object
+  request.ArticleRequest:
+    properties:
+      article:
+        $ref: '#/definitions/domain.ArticleType'
+    type: object
+  response.ArticleDetailResponse:
+    properties:
+      article:
+        $ref: '#/definitions/domain.ArticleType'
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  response.BaseResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  response.ErrorResponse:
+    properties:
+      errorCode:
+        type: string
+      errorId:
+        type: string
+      errorMessage:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /article:
+    post:
+      consumes:
+      - application/json
+      description: Save Article Information
+      parameters:
+      - description: Article request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.ArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ArticleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Save article
+      tags:
+      - Article Detail
+    put:
+      consumes:
+      - application/json
+      description: Update Article Information
+      parameters:
+      - description: Article request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.ArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ArticleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update article
+      tags:
+      - Article Detail
+  /article-search/list:
+    get:
+      consumes:
+      - application/json
+      description: Get Article List Information
+      parameters:
+      - description: Page No
+        in: query
+        name: pageNo
+        type: integer
+      - description: Page Size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ArticleDetailResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get article List
+      tags:
+      - Article Search
+  /article-search/search:
+    get:
+      consumes:
+      - application/json
+      description: Search Article Information
+      parameters:
+      - description: Search Query
+        in: query
+        name: query
+        required: true
+        type: string
+      - description: Page No
+        in: query
+        name: pageNo
+        type: integer
+      - description: Page Size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ArticleDetailResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Search articles
+      tags:
+      - Article Search
+  /article/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Article Information
+      parameters:
+      - description: Article Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Delete article
+      tags:
+      - Article Detail
+    get:
+      consumes:
+      - application/json
+      description: Get Article Information
+      parameters:
+      - description: Article Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ArticleDetailResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get article
+      tags:
+      - Article Detail
+swagger: "2.0"

@@ -13,6 +13,18 @@ import (
 	"github.com/search-n-cache/search-n-cache-service/search"
 )
 
+// Get Article List
+//
+//	@Summary      Get article List
+//	@Description  Get Article List Information
+//	@Tags         Article Search
+//	@Accept       json
+//	@Produce      json
+//	@Param 		  pageNo     query      int  false  "Page No"
+//	@Param 		  pageSize   query      int  false  "Page Size"
+//	@Success      200  {object}  response.ArticleDetailResponse
+//	@Failure      500  {object}  response.ErrorResponse
+//	@Router       /article-search/list [get]
 func GetArticleList(ctx *gin.Context) {
 	search := search.ArticleElasticSearch{}
 	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
@@ -25,6 +37,19 @@ func GetArticleList(ctx *gin.Context) {
 	buildArtSrchSuccessResponse(response, ctx)
 }
 
+// Search Articles 
+//
+//	@Summary      Search articles
+//	@Description  Search Article Information
+//	@Tags         Article Search
+//	@Accept       json
+//	@Produce      json
+//	@Param 		  query      query      string  true "Search Query"
+//	@Param 		  pageNo     query      int     false  "Page No"
+//	@Param 		  pageSize   query      int     false  "Page Size"
+//	@Success      200  {object}  response.ArticleDetailResponse
+//	@Failure      500  {object}  response.ErrorResponse
+//	@Router       /article-search/search [get]
 func SearchArticles(ctx *gin.Context) {
 	search := search.ArticleElasticSearch{}
 	searchQuery := ctx.Query("query")
