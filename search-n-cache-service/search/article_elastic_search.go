@@ -47,8 +47,8 @@ func (s *ArticleElasticSearch) SearchArticles(query string, pageNo int, pageSize
 		Request(
 			&search.Request{
 				Query: &types.Query{
-					MultiMatch: &types.MultiMatchQuery{
-						Query:  query,
+					QueryString: &types.QueryStringQuery{
+						Query:  "*" + query + "*",
 						Fields: []string{"title", "description", "author", "category", "type", "tags"},
 					},
 				},

@@ -30,6 +30,6 @@ func InitializeElasticSearchClient() *elasticsearch.TypedClient {
 		log.Error(err)
 		return nil
 	}
-	log.Info("ElasticSearch Client Initialzed Successfully")
+	log.Info("ElasticSearch Client Initialized Successfully")
 	return typedClient
 }
